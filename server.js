@@ -12,7 +12,7 @@ const imagekit = new ImageKit({
 
 app.get("/api/custom", (req, res) => {
     imagekit.listFiles({
-        tags : ["custom"]
+        path: 'custom_caricatures'
     }, (error, result)=>{
         error ? res.status(500).json({error: "Error"}) : res.json(result);
     });
@@ -20,7 +20,7 @@ app.get("/api/custom", (req, res) => {
 
 app.get("/api/illustrations", (req, res) => {
     imagekit.listFiles({
-        tags : ["illustrations"]
+        path: 'illustrations'
     }, (error, result)=>{
         error ? res.status(500).json({error: "Error"}) : res.json(result);
     });
@@ -28,7 +28,7 @@ app.get("/api/illustrations", (req, res) => {
 
 app.get("/api/party", (req, res) => {
     imagekit.listFiles({
-        tags : ["party"]
+        path: 'party_caricatures'
     }, (error, result)=>{
         error ? res.status(500).json({error: "Error"}) : res.json(result);
     });
@@ -36,7 +36,7 @@ app.get("/api/party", (req, res) => {
 
 app.get("/api/logos", (req, res) => {
     imagekit.listFiles({
-        tags : ["logos"]
+        path: 'logos'
     }, (error, result)=>{
         error ? res.status(500).json({error: "Error"}) : res.json(result);
     });
