@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express()
+const axios = require('axios');
 const ImageKit = require('imagekit');
 require('dotenv').config();
 const port = 3001
@@ -8,6 +9,27 @@ const imagekit = new ImageKit({
     publicKey: process.env.PUBLIC_KEY,
     privateKey: process.env.PRIVATE_KEY,
     urlEndpoint: process.env.URL_ENDPOINT
+})
+
+app.get('/api/autocomplete', async (req, res) => {
+    try {
+        const query = req.query.query;
+        const apiKey = process.env.MAPS_API_KEY; // Replace with your API key
+    
+        // Make a request to the Google Places Autocomplete API
+        const response = await axios.get(
+          `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&key=${apiKey}`
+        );
+    
+        const suggestions = response.data.predictions.map((prediction) => ({
+          description: prediction.description,
+        }));
+    
+        res.json({ suggestions });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred' });
+      }
 })
 
 app.get("/api/custom", (req, res) => {
