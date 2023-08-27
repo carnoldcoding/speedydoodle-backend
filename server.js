@@ -11,6 +11,30 @@ const imagekit = new ImageKit({
     urlEndpoint: process.env.URL_ENDPOINT
 })
 
+app.get('/api/calculate-distance',  async (req, res) => {
+  try {
+    const apiKey = process.env.MAPS_API_KEY;
+    const userLocation = req.query.userLocation; // User's entered location
+    const fixedPoint = '11 N Lincoln Avenue, Wenonah, NJ, USA';
+
+    // Make a request to the Google Distance Matrix API
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(
+        userLocation
+      )}&destinations=${encodeURIComponent(
+        fixedPoint
+      )}&key=${apiKey}&units=imperial`
+    );
+
+    const distance = response.data.rows[0].elements[0].distance.text;
+
+    res.json({ distance });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
 app.get('/api/autocomplete', async (req, res) => {
     try {
         const query = req.query.query;
