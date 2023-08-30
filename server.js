@@ -91,6 +91,3 @@ app.get("/api/logos", (req, res) => {
 app.listen(port, () => {
     console.log("Server Started on Port " + port);
 })
-
-app.use('/.netlify/functions/api', app)
-module.exports.handler = serverless(app);
