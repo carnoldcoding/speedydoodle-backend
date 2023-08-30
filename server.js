@@ -3,7 +3,7 @@ const app = express()
 const axios = require('axios');
 const ImageKit = require('imagekit');
 require('dotenv').config();
-const port = 3001
+const port = process.env.port || 3001;
 
 const imagekit = new ImageKit({
     publicKey: process.env.PUBLIC_KEY,
