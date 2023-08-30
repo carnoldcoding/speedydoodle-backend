@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express()
+const cors = require('cors');
 const axios = require('axios');
 const ImageKit = require('imagekit');
 require('dotenv').config();
@@ -10,6 +11,8 @@ const imagekit = new ImageKit({
     privateKey: process.env.PRIVATE_KEY,
     urlEndpoint: process.env.URL_ENDPOINT
 })
+
+app.use(cors());
 
 app.get('/api/calculate-distance',  async (req, res) => {
   try {
