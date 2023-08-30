@@ -3,7 +3,7 @@ const app = express()
 const axios = require('axios');
 const ImageKit = require('imagekit');
 require('dotenv').config();
-const port = process.env.port || 3001;
+const PORT = process.env.port || 3001;
 
 const imagekit = new ImageKit({
     publicKey: process.env.PUBLIC_KEY,
@@ -88,6 +88,6 @@ app.get("/api/logos", (req, res) => {
     });
 })
 
-app.listen(port, () => {
-    console.log("Server Started on Port " + port);
-})
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
