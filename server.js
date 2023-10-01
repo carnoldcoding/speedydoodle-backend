@@ -2,9 +2,11 @@ const express = require('express');
 const app = express()
 const cors = require('cors');
 const axios = require('axios');
+const bodyParser = require('body-parser');
 const ImageKit = require('imagekit');
+const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
 const imagekit = new ImageKit({
     publicKey: process.env.PUBLIC_KEY,
@@ -12,7 +14,34 @@ const imagekit = new ImageKit({
     urlEndpoint: process.env.URL_ENDPOINT
 })
 
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 app.use(cors());
+app.use(bodyParser.json());
+
+//SGMail
+app.post('/api/send-email', (req, res) => {
+  console.log('Received a POST request to /api/send-email');
+  const { to, from, subject, text, html } = req.body;
+
+  const msg = {
+    to,
+    from,
+    subject,
+    text,
+    html
+  };
+
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log('Email sent');
+      res.status(200).json({ message: 'Email sent successfully' });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    });
+});
 
 app.get('/api/calculate-distance',  async (req, res) => {
   try {
