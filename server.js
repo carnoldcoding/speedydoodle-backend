@@ -74,7 +74,7 @@ app.get('/api/autocomplete', async (req, res) => {
     
         // Make a request to the Google Places Autocomplete API
         const response = await axios.get(
-          `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&key=${apiKey}`
+          `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(query)}&key=${apiKey}`
         );
     
         const suggestions = response.data.predictions.map((prediction) => ({
