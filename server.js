@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 const nodemailer = require('nodemailer');
 
 // Mailgun SMTP configuration for subdomain
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   host: 'smtp.mailgun.org',
   port: 587,
   secure: false, // true for 465, false for other ports
@@ -34,7 +34,7 @@ const transporter = nodemailer.createTransporter({
 app.post('/api/send-email', async (req, res) => {
   console.log('Received a POST request to /api/send-email');
   
-  const { to, from, subject, text, html } = req.body;
+  const { to, subject, text, html } = req.body;
   
   const mailOptions = {
     from: "noreply@mail.speedydoodle.com", // Must be from your verified domain
