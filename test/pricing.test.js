@@ -39,11 +39,11 @@ test('custom: 5 people is 190 plus 2 more at 50, so 150 + 290 is 440', () => {
   assert.equal(priceCustom({ personCount: 5, background: 'none', text: false }, settings).amount, 440);
 });
 
-test('live: 3 hours at 150 is 450, and 40 miles of travel is 5, so 455', () => {
-  // 40 miles / 27 miles per gallon = 1.481 gallons. 1.481 * 3.7 = 5.48, rounded down to 5.
+test('live: 3 hours at 150 is 450, and 40 miles of travel is 5.48, so 455.48', () => {
+  // 40 miles / 27 miles per gallon = 1.48148 gallons. 1.48148 * 3.7 = 5.48148, so 5.48 in cents.
   const price = priceLive({ startTime: '18:00', endTime: '21:00', oneWayMiles: 20 }, settings);
-  assert.equal(price.amount, 455);
-  assert.deepEqual(price.breakdown, { hours: 3, eventCost: 450, roundTripMiles: 40, travelCost: 5 });
+  assert.equal(price.amount, 455.48);
+  assert.deepEqual(price.breakdown, { hours: 3, eventCost: 450, roundTripMiles: 40, travelCost: 5.48 });
 });
 
 test('live: an event from 22:00 to 01:30 is 3.5 hours, so 525 with no known distance', () => {
@@ -65,7 +65,8 @@ test('other: an illustration is 500 in total, and a logo is 75 for each hour', (
   );
 });
 
-test('a price shows as dollars, with /hr for an hourly rate', () => {
-  assert.equal(formatPrice({ amount: 455, unit: 'total' }), '$455');
+test('a total shows dollars and cents, and an hourly rate shows /hr', () => {
+  assert.equal(formatPrice({ amount: 455.48, unit: 'total' }), '$455.48');
+  assert.equal(formatPrice({ amount: 375, unit: 'total' }), '$375.00');
   assert.equal(formatPrice({ amount: 75, unit: 'hour' }), '$75/hr');
 });
