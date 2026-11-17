@@ -1,5 +1,9 @@
-// Price calculations. The formulas are the ones the quote form used in the
-// browser. The server is now the only place that decides a price.
+// Price calculations. The formulas are the ones the quote form uses in the
+// browser. The server is the only place that decides the price of a quote.
+
+// Round to whole cents. The small addition stops a value such as 1.005 from
+// rounding down because of how a computer stores decimal fractions.
+const roundCurrency = (amount) => Math.round((amount + Number.EPSILON) * 100) / 100;
 
 // Hours between two "HH:MM" times. An end time before the start time means
 // the event ends on the next day.
@@ -16,14 +20,14 @@ function eventHours(startTime, endTime) {
 // oneWayMiles is null when the distance is not known. The travel cost is then 0.
 function priceLive({ startTime, endTime, oneWayMiles }, settings) {
   const hours = eventHours(startTime, endTime);
-  const eventCost = settings.live_hourly_rate * hours;
+  const eventCost = roundCurrency(settings.live_hourly_rate * hours);
   const roundTripMiles = oneWayMiles === null ? null : oneWayMiles * 2;
   const travelCost =
     roundTripMiles === null
       ? 0
-      : Math.floor((roundTripMiles / settings.miles_per_gallon) * settings.price_per_gallon);
+      : roundCurrency((roundTripMiles / settings.miles_per_gallon) * settings.price_per_gallon);
   return {
-    amount: eventCost + travelCost,
+    amount: roundCurrency(eventCost + travelCost),
     unit: 'total',
     breakdown: { hours, eventCost, roundTripMiles, travelCost },
   };
@@ -47,7 +51,7 @@ function priceCustom({ personCount, background, text }, settings) {
         : 0;
   const textPrice = text ? settings.custom_text_price : 0;
   return {
-    amount: basePrice + peoplePrice + backgroundPrice + textPrice,
+    amount: roundCurrency(basePrice + peoplePrice + backgroundPrice + textPrice),
     unit: 'total',
     breakdown: { basePrice, peoplePrice, backgroundPrice, textPrice },
   };
@@ -61,9 +65,13 @@ function priceOther({ selection }, settings) {
   return { amount: settings.illustration_price, unit: 'total', breakdown: {} };
 }
 
+// A total shows dollars and cents. An hourly rate shows whole dollars when it has no cents.
 function formatPrice(price) {
-  const amount = Number.isInteger(price.amount) ? String(price.amount) : price.amount.toFixed(2);
-  return price.unit === 'hour' ? `$${amount}/hr` : `$${amount}`;
+  if (price.unit === 'hour') {
+    const rate = Number.isInteger(price.amount) ? String(price.amount) : price.amount.toFixed(2);
+    return `$${rate}/hr`;
+  }
+  return `$${price.amount.toFixed(2)}`;
 }
 
-module.exports = { eventHours, priceLive, priceCustom, priceOther, formatPrice };
+module.exports = { roundCurrency, eventHours, priceLive, priceCustom, priceOther, formatPrice };
