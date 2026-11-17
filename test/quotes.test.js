@@ -87,7 +87,7 @@ test('a price from the browser is ignored', async () => {
   );
   assert.equal((await response.json()).price.amount, 375);
   assert.equal(quoteRows(app.db)[0].price_amount, 375);
-  assert.match(app.mailer.sent[0].text, /Estimated Price: \$375/);
+  assert.match(app.mailer.sent[0].text, /Estimated Price: \$375\.00/);
   await app.close();
 });
 
@@ -95,8 +95,8 @@ test('a live quote gets its distance from the server, not from the browser', asy
   const maps = fakeMaps({ miles: 20 });
   const app = await startApp({ maps });
   const response = await app.post('/api/quotes', liveQuote({ distance: '0.1 mi', totalDistance: 0, gasCost: 0 }));
-  // 3 hours at 150 is 450. 40 miles of travel is 5.
-  assert.equal((await response.json()).price.amount, 455);
+  // 3 hours at 150 is 450. 40 miles of travel is 5.48.
+  assert.equal((await response.json()).price.amount, 455.48);
   assert.deepEqual(maps.calls, ['1 Main Street, Camden, NJ, USA']);
   await app.close();
 });
