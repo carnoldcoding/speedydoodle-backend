@@ -273,3 +273,16 @@ test('an unknown route answers 404', async () => {
   assert.equal((await app.get('/api/does-not-exist')).status, 404);
   await app.close();
 });
+
+test('the old send-email route does not exist and sends nothing', async () => {
+  const app = await startApp();
+  const response = await app.post('/api/send-email', {
+    to: 'victim@example.test',
+    subject: 'Any subject',
+    html: '<p>Any body</p>',
+    text: 'Any body',
+  });
+  assert.equal(response.status, 404);
+  assert.equal(app.mailer.sent.length, 0);
+  await app.close();
+});

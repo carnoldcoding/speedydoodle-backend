@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const { createQuoteService, FieldError } = require('./quotes');
-const { mountLegacySendEmail } = require('./legacySendEmail');
 
 const GALLERY_FOLDERS = {
   custom: 'custom_caricatures',
@@ -74,8 +73,6 @@ function createApp({ db, mailer, maps, imagekit, sender, trustProxy, log = conso
       });
     });
   }
-
-  mountLegacySendEmail(app, { mailer, sender, log });
 
   app.use((req, res) => {
     res.status(404).json({ error: 'not_found' });
